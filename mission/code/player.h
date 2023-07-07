@@ -12,7 +12,6 @@
 
 void init(struct Player *player) {
 	// This function will be executed at the begin of each game, only once.
-	
 }
 
 struct Point place(struct Player *player) {
