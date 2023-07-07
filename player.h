@@ -6,6 +6,7 @@
  */
 
 #include "../include/playerbase.h"
+#include <assert.h>
 #include <bits/types/FILE.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,9 +32,12 @@ void init(struct Player *player)
         }
     }
     FILE *vfile;
-    vfile = fopen("value.result", "r");
-    int v1, v2, v3, v4;
-    fscanf(vfile, "%d%d%d%d", &v1, &v2, &v3, &v4);
+    vfile = fopen("../value.tmp", "r");
+    int v1 = 0, v2, v3, v4;
+    int tmp = fscanf(vfile, "%d%d%d%d", &v1, &v2, &v3, &v4);
+    assert(tmp != EOF);
+    assert(v1 != 0);
+    fclose(vfile);
     // 四个角加权
     value[0][0] += v1, value[0][player->col_cnt - 1] += v1;
     value[player->row_cnt - 1][0] += v1, value[player->row_cnt - 1][player->col_cnt - 1] += v1;
