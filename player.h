@@ -32,11 +32,13 @@ void init(struct Player *player)
         }
     }
     FILE *vfile;
-    vfile = fopen("../value.tmp", "r");
-    int v1 = 0, v2, v3, v4;
+    vfile = fopen("value.tmp", "r");
+    int v1 = 0, v2 = 0, v3 = 0, v4 = 0;
     int tmp = fscanf(vfile, "%d%d%d%d", &v1, &v2, &v3, &v4);
     assert(tmp != EOF);
-    assert(v1 != 0);
+    fclose(vfile);
+    vfile = fopen("valuein.tmp", "w");
+    fprintf(vfile, "%d %d %d %d", v1, v2, v3, v4);
     fclose(vfile);
     // 四个角加权
     value[0][0] += v1, value[0][player->col_cnt - 1] += v1;

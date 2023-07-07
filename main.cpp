@@ -12,8 +12,9 @@
 #include <unistd.h>
 using namespace std;
 const double T0 = 100;
-const double d = 0.97;
-const double Tk = 0.0001;
+const double d = 0.993;
+const double Tk = 1e-10;
+const int INF = 0x3f3f3f3f;
 int now_score = 0;
 int now_value[4] = {0, 0, 0, 0};
 
@@ -100,14 +101,20 @@ int test(int next_value[])
 int main()
 {
     srand(time(NULL));
+    system("rm -r tmp");
     system("mkdir tmp");
-    int t = T0;
+    double t = T0;
     while (t > Tk)
     {
         int next_value[4];
         for (int j = 0; j < 4; j++)
         {
-            next_value[j] = now_value[j] + (rand() % 10 - 5) * t;
+            long long nv = now_value[j] + (rand() * 2 - RAND_MAX) * t;
+            while (nv > INF)
+            {
+                nv = now_value[j] + (rand() * 2 - RAND_MAX) * t;
+            }
+            next_value[j] = nv;
         }
         int next_score = -test(next_value);
         int dE = next_score - now_score;
