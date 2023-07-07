@@ -33,23 +33,20 @@ void init(struct Player *player)
     }
     FILE *vfile;
     vfile = fopen("value.tmp", "r");
-    int v1 = 0, v2 = 0, v3 = 0, v4 = 0;
-    int tmp = fscanf(vfile, "%d%d%d%d", &v1, &v2, &v3, &v4);
+    int v1 = 0, v2 = 0, v3 = 0, v4 = 0, v5;
+    int tmp = fscanf(vfile, "%d%d%d%d%d", &v1, &v2, &v3, &v4, &v5);
     assert(tmp != EOF);
     fclose(vfile);
-    vfile = fopen("valuein.tmp", "w");
-    fprintf(vfile, "%d %d %d %d", v1, v2, v3, v4);
-    fclose(vfile);
-    // 四个角加权
+    // 1四个角加权
     value[0][0] += v1, value[0][player->col_cnt - 1] += v1;
     value[player->row_cnt - 1][0] += v1, value[player->row_cnt - 1][player->col_cnt - 1] += v1;
-    // 角的相邻位置减权
+    // 2角的相邻位置减权
     value[0][1] -= v2, value[1][0] -= v2, value[1][1] -= v2;
     value[0][player->col_cnt - 2] -= v2, value[1][player->col_cnt - 1] -= v2, value[1][player->col_cnt - 2] -= v2;
     value[player->row_cnt - 2][0] -= v2, value[player->row_cnt - 1][1] -= v2, value[player->row_cnt - 2][1] -= v2;
     value[player->row_cnt - 2][player->col_cnt - 1] -= v2, value[player->row_cnt - 1][player->col_cnt - 2] -= v2,
         value[player->row_cnt - 2][player->col_cnt - 2] -= v2;
-    // 2
+    // 3
     for (int i = 0; i < 3; i++)
     {
         value[player->row_cnt / 2 - 2][player->col_cnt / 2 - 2 + i] += v3;
@@ -57,13 +54,21 @@ void init(struct Player *player)
         value[player->row_cnt / 2 - 2 + i][player->col_cnt / 2 + 1] += v3;
         value[player->row_cnt / 2 + 1 - i][player->col_cnt / 2 + 1] += v3;
     }
-    // 3
+    // 4
     for (int i = 0; i < player->col_cnt - 4; i++)
     {
         value[0][2 + i] += v4;
         value[2 + i][0] += v4;
         value[player->row_cnt - 1][2 + i] += v4;
         value[2 + i][player->col_cnt - 1] += v4;
+    }
+    // 5
+    for (int i = 0; i < player->col_cnt - 4; i++)
+    {
+        value[2 + i][1] -= v5;
+        value[2 + i][player->col_cnt - 2] -= v5;
+        value[1][2 + i] -= v5;
+        value[player->col_cnt - 2][2 + i] -= v5;
     }
 }
 static int is_valid(struct Player *player, int posx, int posy, char my_piece)
