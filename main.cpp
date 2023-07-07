@@ -12,11 +12,14 @@
 #include <unistd.h>
 using namespace std;
 const double T0 = 100;
-const double d = 0.993;
-const double Tk = 1e-10;
+const double d = 0.99;
+const double Tk = 1e-3;
 const int INF = 0x3f3f3f3f;
+const int VN = 5;
 int now_score = 0;
-int now_value[4] = {0, 0, 0, 0};
+int now_value[VN];
+int best_score = 0;
+int best_value[VN];
 
 void prepare_dir(int i, int next_value[])
 {
@@ -28,7 +31,7 @@ void prepare_dir(int i, int next_value[])
     string vfile = "tmp/" + i_str + "/mission/value.tmp";
     fstream voutput;
     voutput.open(vfile, ios::out);
-    for (int j = 0; j < 4; j++)
+    for (int j = 0; j < VN; j++)
     {
         voutput << next_value[j] << " ";
     }
@@ -106,34 +109,44 @@ int main()
     double t = T0;
     while (t > Tk)
     {
-        int next_value[4];
-        for (int j = 0; j < 4; j++)
+        int next_value[VN];
+        for (int j = 0; j < VN; j++)
         {
-            long long nv = now_value[j] + (rand() * 2 - RAND_MAX) * t;
-            while (nv > INF)
+            do
             {
-                nv = now_value[j] + (rand() * 2 - RAND_MAX) * t;
-            }
-            next_value[j] = nv;
+                next_value[j] = now_value[j] + (rand() % 100 - 50) * t;
+            } while (next_value[j] < 0);
         }
         int next_score = -test(next_value);
         int dE = next_score - now_score;
         if (dE < 0)
         {
             now_score = next_score;
-            memcpy(now_value, next_value, 4 * sizeof(int));
+            memcpy(now_value, next_value, VN * sizeof(int));
         }
         else if (exp(-dE / t) * RAND_MAX > rand())
         {
             now_score = next_score;
-            memcpy(now_value, next_value, 4 * sizeof(int));
+            memcpy(now_value, next_value, VN * sizeof(int));
+        }
+        if (now_score < best_score)
+        {
+            best_score = now_score;
+            memcpy(best_value, now_value, VN * sizeof(int));
         }
         cout << "---------------------------\n";
-        cout << "当前分数：" << now_score << " 候选分数:" << next_score << " 当前温度：" << t << "\n";
+        cout << "当前分数：" << now_score << " 候选分数:" << next_score << " 最优分数:" << best_score << " 当前温度："
+             << t << "\n";
         cout << "当前权值:";
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < VN; i++)
         {
             cout << now_value[i] << " ";
+        }
+        cout << "\n";
+        cout << "最优权值:";
+        for (int i = 0; i < VN; i++)
+        {
+            cout << best_value[i] << " ";
         }
         cout << "\n";
         cout << "---------------------------" << endl;
