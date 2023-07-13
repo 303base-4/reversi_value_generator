@@ -13,7 +13,7 @@
 using namespace std;
 const double T0 = 100;
 const double d = 0.99;
-const double Tk = 1e-3;
+const double Tk = 0.1;
 const int INF = 0x3f3f3f3f;
 const int VN = 5;
 int now_score = 0;
